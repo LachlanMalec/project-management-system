@@ -3,6 +3,8 @@
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <TargetFramework>net7.0</TargetFramework>
+        <RootNamespace>ProjectManagementSystem.ConsoleUI</RootNamespace>
+        <AssemblyName>ProjectManagementSystem.ConsoleUI</AssemblyName>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
     </PropertyGroup>
