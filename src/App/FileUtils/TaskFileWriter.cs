@@ -26,7 +26,7 @@ public static class TaskFileWriter
     /// </summary>
     /// <param name="taskCollection">The task collection to write out to the file.</param>
     /// <param name="filePath">The file to write the task collection to.</param>
-    public static void Write(TaskCollection taskCollection, string filePath)
+    public static void Write(string filePath, TaskCollection taskCollection)
     {
         var taskRecords = taskCollection.Tasks.Select(CreateTaskRecord).ToList();
         if (File.Exists(filePath)) File.Delete(filePath);
