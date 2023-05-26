@@ -36,4 +36,14 @@ public class TaskCollection
     {
         Tasks.Remove(task);
     }
+    
+    /// <summary>
+    /// Finds a task with the specified ID.
+    /// </summary>
+    /// <param name="id">The ID of the task to find.</param>
+    /// <returns>The task with the specified ID, or null if no such task exists.</returns>
+    public Task? Find(string id)
+    {
+        return Tasks.Find(task => task.Id == id);
+    }
 }
