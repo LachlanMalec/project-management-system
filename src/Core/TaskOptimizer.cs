@@ -8,7 +8,7 @@ public class TaskOptimizer
     /// <summary>
     /// A directed acyclic graph of tasks.
     /// </summary>
-    private Graph<Task> _taskGraph;
+    private readonly Graph<Task> _taskGraph;
 
     /// <summary>
     /// Creates a new task optimizer.
