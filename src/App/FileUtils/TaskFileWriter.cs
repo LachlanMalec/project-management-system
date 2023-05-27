@@ -31,9 +31,11 @@ public static class TaskFileWriter
         var taskRecords = taskCollection.Tasks.Select(CreateTaskRecord).ToList();
         if (File.Exists(filePath)) File.Delete(filePath);
         using var writer = new StreamWriter(filePath);
-        foreach (var line in from taskRecord in taskRecords
-                 let line = $"{taskRecord.Id},{taskRecord.TimeToComplete}"
-                 select taskRecord.Dependencies.Aggregate(line, (current, dependency) => current + $",{dependency}"))
+        foreach (var taskRecord in taskRecords)
+        {
+            var line = $"{taskRecord.Id},{taskRecord.TimeToComplete}";
+            foreach (var dependency in taskRecord.Dependencies) line += $"{dependency},";
             writer.WriteLine(line);
+        }
     }
 }
