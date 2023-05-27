@@ -16,5 +16,5 @@ public class TaskRecord
     /// <summary>
     /// The IDs of the tasks on which this task depends.
     /// </summary>
-    public List<string> Dependencies { get; set; }
+    public List<string> Dependencies { get; set; } = new List<string>();
 }
