@@ -1,13 +1,13 @@
 namespace ProjectManagementSystem.ConsoleUI;
 using Spectre.Console;
-public class Interface
+public static class Interface
 {
-    public void ShowSplash()
+    public static void ShowSplash()
     {
         AnsiConsole.Write(new FigletText("Project Management System").LeftJustified().Color(Color.Aqua));
     }
     
-    public string ShowMainMenu()
+    public static string ShowMainMenu()
     {
         var menu = new SelectionPrompt<string>()
             .Title("Main Menu")
@@ -15,14 +15,14 @@ public class Interface
         return menu.Show(AnsiConsole.Console);
     }
     
-    public string ShowCreateTaskIdPrompt()
+    public static string ShowCreateTaskIdPrompt()
     {
         var prompt = new TextPrompt<string>("Enter the Id of the task.")
             .PromptStyle("blue");
         return prompt.Show(AnsiConsole.Console);
     }
     
-    public string ShowCreateTaskTimeToCompletePrompt()
+    public static string ShowCreateTaskTimeToCompletePrompt()
     {
         var prompt = new TextPrompt<string>("Enter the time to complete the task.")
             .PromptStyle("blue")
@@ -31,7 +31,7 @@ public class Interface
         return prompt.Show(AnsiConsole.Console);
     }
     
-    public string ShowCreateTaskDependenciesPrompt()
+    public static string ShowCreateTaskDependenciesPrompt()
     {
         var prompt = new TextPrompt<string>("Enter the dependencies of the task, separated by commas. Leave blank for no dependencies.")
             .PromptStyle("blue")
@@ -39,7 +39,7 @@ public class Interface
         return prompt.Show(AnsiConsole.Console);
     }
     
-    public string ShowImportTasksConfirmation()
+    public static string ShowImportTasksConfirmation()
     {
         var menu = new SelectionPrompt<string>()
             .Title("Are you sure you want to import tasks? This will overwrite any unsaved changes.")
@@ -47,7 +47,7 @@ public class Interface
         return menu.Show(AnsiConsole.Console);
     }
     
-    public string ShowImportTasksFilePrompt()
+    public static string ShowImportTasksFilePrompt()
     {
         var prompt = new TextPrompt<string>("Enter the path to the file to import tasks from.")
             .PromptStyle("blue")
@@ -56,7 +56,7 @@ public class Interface
         return prompt.Show(AnsiConsole.Console);
     }
     
-    public string ShowSaveTasksFilePrompt()
+    public static string ShowSaveTasksFilePrompt()
     {
         var prompt = new TextPrompt<string>("Enter the path to the file to save tasks to.")
             .PromptStyle("blue")
@@ -65,7 +65,7 @@ public class Interface
         return prompt.Show(AnsiConsole.Console);
     }
     
-    public string ShowSaveTasksConfirmation()
+    public static string ShowSaveTasksConfirmation()
     {
         var menu = new SelectionPrompt<string>()
             .Title("Are you sure you want to save tasks? This will overwrite the current save file.")
@@ -73,7 +73,7 @@ public class Interface
         return menu.Show(AnsiConsole.Console);
     }
     
-    public string ShowExitConfirmation()
+    public static string ShowExitConfirmation()
     {
         var menu = new SelectionPrompt<string>()
             .Title("Are you sure you want to exit? Any unsaved changes will be lost.")

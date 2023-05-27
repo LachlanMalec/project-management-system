@@ -8,26 +8,25 @@ public class Program
     {
         var state = new State();
         string? currentFilePath = null;
-        var view = new Interface();
-        view.ShowSplash();
+        Interface.ShowSplash();
 
         while (true)
         {
-            var mainMenuChoice = view.ShowMainMenu();
+            var mainMenuChoice = Interface.ShowMainMenu();
             switch (mainMenuChoice)
             {
                 case "Create Task":
-                    var newTaskId = view.ShowCreateTaskIdPrompt();
-                    var newTaskTimeToComplete = int.Parse(view.ShowCreateTaskTimeToCompletePrompt());
-                    var newTaskDependencies = view.ShowCreateTaskDependenciesPrompt().Split(",").ToList();
+                    var newTaskId = Interface.ShowCreateTaskIdPrompt();
+                    var newTaskTimeToComplete = int.Parse(Interface.ShowCreateTaskTimeToCompletePrompt());
+                    var newTaskDependencies = Interface.ShowCreateTaskDependenciesPrompt().Split(",").ToList();
                     newTaskDependencies.RemoveAll(s => s == "");
                     new CreateTaskCommand(newTaskId, newTaskTimeToComplete, newTaskDependencies).Execute(state);
                     break;
                 case "Import Tasks (from file)":
-                    switch (view.ShowImportTasksConfirmation())
+                    switch (Interface.ShowImportTasksConfirmation())
                     {
                         case "Continue":
-                            var filePath = view.ShowImportTasksFilePrompt();
+                            var filePath = Interface.ShowImportTasksFilePrompt();
                             new ImportTasksCommand(filePath).Execute(state);
                             currentFilePath = filePath;
                             break;
@@ -36,12 +35,12 @@ public class Program
                     }
                     break;
                 case "Save Tasks (to file)":
-                    switch(view.ShowSaveTasksConfirmation())
+                    switch(Interface.ShowSaveTasksConfirmation())
                     {
                         case "Continue":
                             if (currentFilePath == null)
                             {
-                                var filePath = view.ShowSaveTasksFilePrompt();
+                                var filePath = Interface.ShowSaveTasksFilePrompt();
                                 new SaveTasksCommand(filePath).Execute(state);
                                 currentFilePath = filePath;
                             }
@@ -55,7 +54,7 @@ public class Program
                     }
                     break;
                 case "Exit":
-                    switch (view.ShowExitConfirmation())
+                    switch (Interface.ShowExitConfirmation())
                     {
                         case "Exit":
                             Environment.Exit(0);
