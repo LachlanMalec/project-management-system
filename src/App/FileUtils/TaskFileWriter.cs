@@ -35,6 +35,8 @@ public static class TaskFileWriter
         {
             var line = $"{taskRecord.Id},{taskRecord.TimeToComplete}";
             foreach (var dependency in taskRecord.Dependencies) line += $"{dependency},";
+            // If any dependencies were added, remove the trailing comma
+            if (taskRecord.Dependencies.Count > 0) line = line.Remove(line.Length - 1);
             writer.WriteLine(line);
         }
     }
