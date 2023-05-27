@@ -10,6 +10,8 @@ public class State
 {
     private TaskCollection _taskCollection;
     
+    public TaskOptimizer TaskOptimizer { get; private set; }
+    
     // Memoization of optimized tasks.
     private List<Task>? _optimizedTasks;
     
@@ -19,22 +21,24 @@ public class State
     public State()
     {
         _taskCollection = new TaskCollection(new List<Task>());
+        TaskOptimizer = new TaskOptimizer(_taskCollection);
         _optimizedTasks = null;
     }
     
     /// <summary>
     /// The global task collection.
     /// </summary>
-    public TaskCollection? TaskCollection
+    public TaskCollection TaskCollection
     {
         get => _taskCollection;
         set
         {
             _taskCollection = value;
+            TaskOptimizer = new TaskOptimizer(value);
             FlushOptimizedTasks();
         }
     }
-    
+
     /// <summary>
     /// Flushes the memoized optimized tasks.
     /// </summary>

@@ -39,4 +39,29 @@ public class TaskOptimizer
         var sortedNodes = _taskGraph.TopologicalSort();
         return sortedNodes.Select(n => n.Value).ToList();
     }
+
+    /// <summary>
+    /// Gets the layers of tasks from the task graph.
+    /// </summary>
+    /// <returns>A list of layers of tasks.</returns>
+    private List<List<Task>> GetLayers() => _taskGraph.Layers.Select(layer => layer.Nodes.Select(node => node.Value).ToList()).ToList();
+    
+    /// <summary>
+    /// Gets the tasks in an order where no task is dependent on a task that comes after it.
+    /// </summary>
+    /// <returns>A list of tasks in the order in which they could be performed.</returns>
+    public List<Task> GetOrderedTasks()
+    {
+        var layers = GetLayers();
+        var orderedTasks = new List<Task>();
+        foreach (var layer in layers)
+        {
+            foreach (var task in layer)
+            {
+                if (orderedTasks.Contains(task)) continue;
+                orderedTasks.Add(task);
+            }
+        }
+        return orderedTasks;
+    }
 }

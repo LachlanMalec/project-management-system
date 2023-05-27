@@ -11,7 +11,7 @@ public static class Interface
     {
         var menu = new SelectionPrompt<string>()
             .Title("Main Menu")
-            .AddChoices(new[] { "Create Task", "Import Tasks (from file)", "Save Tasks (to file)", "Exit" });
+            .AddChoices(new[] { "Create Task", "Import Tasks (from file)", "Save Tasks (to file)", "Save Ordered Tasks (to file)", "Save Optimized Tasks (to file)", "Exit" });
         return menu.Show(AnsiConsole.Console);
     }
     
@@ -69,6 +69,22 @@ public static class Interface
     {
         var menu = new SelectionPrompt<string>()
             .Title("Are you sure you want to save tasks? This will overwrite the current save file.")
+            .AddChoices(new[] { "Continue", "Back" });
+        return menu.Show(AnsiConsole.Console);
+    }
+
+    public static string ShowSaveOrderedTasksConfirmation()
+    {
+        var menu = new SelectionPrompt<string>()
+            .Title("Are you sure you want to save the ordered tasks? This will overwrite the current contents of 'Sequence.txt'.")
+            .AddChoices(new[] { "Continue", "Back" });
+        return menu.Show(AnsiConsole.Console);
+    }
+    
+    public static string ShowSaveOptimizedTasksConfirmation()
+    {
+        var menu = new SelectionPrompt<string>()
+            .Title("Are you sure you want to save the optimized tasks? This will overwrite the current contents of 'EarliestTimes.txt'.")
             .AddChoices(new[] { "Continue", "Back" });
         return menu.Show(AnsiConsole.Console);
     }

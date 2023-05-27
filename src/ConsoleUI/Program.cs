@@ -1,5 +1,7 @@
 ﻿using ProjectManagementSystem.App;
 using ProjectManagementSystem.App.Commands;
+using Spectre.Console;
+
 namespace ProjectManagementSystem.ConsoleUI;
 
 public class Program
@@ -27,8 +29,13 @@ public class Program
                     {
                         case "Continue":
                             var filePath = Interface.ShowImportTasksFilePrompt();
-                            new ImportTasksCommand(filePath).Execute(state);
-                            currentFilePath = filePath;
+                            AnsiConsole.Status()
+                                .Spinner(Spinner.Known.Dots2)
+                                .Start("Importing tasks...", ctx =>
+                                {
+                                    new ImportTasksCommand(filePath).Execute(state);
+                                    currentFilePath = filePath;
+                                });
                             break;
                         case "Back":
                             break;
@@ -48,6 +55,26 @@ public class Program
                             {
                                 new SaveTasksCommand(currentFilePath).Execute(state);
                             }
+                            break;
+                        case "Back":
+                            break;
+                    }
+                    break;
+                case "Save Ordered Tasks (to file)":
+                    switch (Interface.ShowSaveOrderedTasksConfirmation())
+                    {
+                        case "Continue":
+                            new SaveOrderedTasksCommand().Execute(state);
+                            break;
+                        case "Back":
+                            break;
+                    }
+                    break;
+                case "Save Optimized Tasks (to file)":
+                    switch (Interface.ShowSaveOptimizedTasksConfirmation())
+                    {
+                        case "Continue":
+                            new SaveOptimizedTasksCommand().Execute(state);
                             break;
                         case "Back":
                             break;
