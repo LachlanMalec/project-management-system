@@ -40,10 +40,19 @@ public static class TaskFileReader
         }
 
         var tasks = new List<Task>();
-        foreach (var task in from taskRecord in taskRecords
-                 let dependencies =
-                     taskRecord.Dependencies.Select(dependencyId => tasks.Find(t => t.Id == dependencyId)).ToList()
-                 select new Task(taskRecord.Id, taskRecord.TimeToComplete, dependencies)) tasks.Add(task);
+        foreach (var taskRecord in taskRecords)
+        {
+            var dependencies = new List<Task>();
+            foreach (var dependency in taskRecord.Dependencies)
+            {
+                var task = tasks.Find(t => t.Id == dependency);
+                if (task == null) throw new InvalidOperationException($"No task with ID {dependency} exists.");
+                dependencies.Add(task);
+            }
+
+            var newTask = new Task(taskRecord.Id, taskRecord.TimeToComplete, dependencies);
+            tasks.Add(newTask);
+        }
         return new TaskCollection(tasks);
     }
 }
