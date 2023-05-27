@@ -17,6 +17,7 @@ public static class TaskFileReader
     {
         var taskRecord = new TaskRecord();
         var values = line.Split(',');
+        for (var i = 0; i < values.Length; i++) values[i] = values[i].Trim();
         taskRecord.Id = values[0];
         taskRecord.TimeToComplete = int.Parse(values[1]);
         for (var i = 2; i < values.Length; i++) taskRecord.Dependencies.Add(values[i]);
