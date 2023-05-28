@@ -1,5 +1,5 @@
-using ProjectManagementSystem.Core;
-using Task = ProjectManagementSystem.Core.Task;
+using TaskEntity = ProjectManagementSystem.Core.Task;
+using TaskCollection = ProjectManagementSystem.Core.TaskCollection;
 
 namespace ProjectManagementSystem.App;
 
@@ -8,65 +8,81 @@ namespace ProjectManagementSystem.App;
 /// </summary>
 public class State
 {
-    private TaskCollection _taskCollection;
+    /// <summary>
+    /// The collection of tasks.
+    /// </summary>
+    private TaskCollection _tasks;
     
-    public TaskOptimizer TaskOptimizer { get; private set; }
-    
+    // Memoization of ordered tasks.
+    private TaskCollection? _orderedTasks;
+
     // Memoization of optimized tasks.
-    private List<Task>? _optimizedTasks;
+    private TaskCollection? _optimizedTasks;
     
     /// <summary>
     /// Initializes application state.
     /// </summary>
     public State()
     {
-        _taskCollection = new TaskCollection(new List<Task>());
-        TaskOptimizer = new TaskOptimizer(_taskCollection);
+        _tasks = new TaskCollection();
+        _orderedTasks = null;
         _optimizedTasks = null;
     }
     
     /// <summary>
-    /// The global task collection.
+    /// The collection of tasks.
     /// </summary>
-    public TaskCollection TaskCollection
+    public TaskCollection Tasks
     {
-        get => _taskCollection;
+        get => _tasks;
         set
         {
-            _taskCollection = value;
-            TaskOptimizer = new TaskOptimizer(value);
-            FlushOptimizedTasks();
+            _tasks = value;
+            _optimizedTasks = null;
+            _orderedTasks = null;
         }
-    }
-
-    /// <summary>
-    /// Flushes the memoized optimized tasks.
-    /// </summary>
-    public void FlushOptimizedTasks()
-    {
-        _optimizedTasks = null;
     }
     
     /// <summary>
-    /// Gets the optimized tasks. If the tasks have not been optimized yet, they will be optimized.
+    /// Adds a task to the list of tasks.
     /// </summary>
-    /// <exception cref="InvalidOperationException"></exception>
-    public List<Task> OptimizedTasks
+    /// <param name="task">The task to add.</param>
+    public void AddTask(TaskEntity task)
     {
-        get
-        {
-            if (_optimizedTasks != null)
-            {
-                return _optimizedTasks;
-            }
-            if (_taskCollection == null)
-            {
-                throw new InvalidOperationException("No tasks to optimize.");
-            }
-            var taskOptimizer = new TaskOptimizer(_taskCollection);
-            _optimizedTasks = taskOptimizer.Optimize();
+        _tasks.Add(task);
+        _optimizedTasks = null;
+        _orderedTasks = null;
+    }
 
-            return _optimizedTasks;
-        }
+    /// <summary>
+    /// Updates the duration of a task in the list of tasks.
+    /// </summary>
+    /// <param name="id">The ID of the task to update.</param>
+    /// <param name="duration">The new duration of the task.</param>
+    public void UpdateTaskDuration(string id, int duration)
+    {
+        var index = _tasks.FindIndex(t => t.Id == id);
+        _tasks[index].TimeToComplete = duration;
+        // TODO: Possibly clear memoized tasks orderings.
+        //_optimizedTasks = null;
+        //_orderedTasks = null;
+    }
+
+    public Task<TaskCollection> OptimizedTasks()
+    {
+        if (_optimizedTasks != null) return Task.FromResult(_optimizedTasks);
+        //TODO: Optimize the tasks.
+        //_optimizedTasks = Tasks.Optimized();
+        _optimizedTasks = Tasks;
+        return Task.FromResult(_optimizedTasks);
+    }
+    
+    public Task<TaskCollection> OrderedTasks()
+    {
+        if (_orderedTasks != null) return Task.FromResult(_orderedTasks);
+        //TODO: Order the tasks.
+        //_orderedTasks = Tasks.Ordered();
+        _orderedTasks = Tasks;
+        return Task.FromResult(_orderedTasks);
     }
 }

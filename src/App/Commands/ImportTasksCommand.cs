@@ -9,9 +9,8 @@ public class ImportTasksCommand
         _filePath = filePath;
     }
     
-    public void Execute(State state)
+    public async Task Execute(State state)
     {
-        var taskCollection = TaskFileReader.Read(_filePath);
-        state.TaskCollection = taskCollection;
+        state.Tasks = await TaskFileReader.Read(_filePath);
     }
 }

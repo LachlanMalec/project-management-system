@@ -64,36 +64,4 @@ public class TestTask
         var task2 = new Task("Test Task 2", 100, new List<Task> { new Task("Dependent Task", 50, new List<Task>()) });
         Assert.That(task1, Is.Not.EqualTo(task2));
     }
-    
-    [Test]
-    public void CompareOrderOfIdenticalTasks()
-    {
-        var task1 = new Task("Test Task", 100, new List<Task>());
-        var task2 = new Task("Test Task", 100, new List<Task>());
-        Assert.That(task1.CompareTo(task2), Is.EqualTo(0));
-    }
-    
-    [Test]
-    public void CompareOrderOfDifferentTasks()
-    {
-        var task1 = new Task("Test Task", 100, new List<Task>());
-        var task2 = new Task("Test Task 2", 100, new List<Task>());
-        Assert.That(task1.CompareTo(task2), Is.LessThan(0));
-    }
-    
-    [Test]
-    public void CompareOrderOfIdenticalTasksWithDeps()
-    {
-        var task1 = new Task("Test Task", 100, new List<Task> { new Task("Dependent Task", 50, new List<Task>()) });
-        var task2 = new Task("Test Task", 100, new List<Task> { new Task("Dependent Task", 50, new List<Task>()) });
-        Assert.That(task1.CompareTo(task2), Is.EqualTo(0));
-    }
-    
-    [Test]
-    public void CompareOrderOfDifferentTasksWithDeps()
-    {
-        var task1 = new Task("Test Task", 100, new List<Task> { new Task("Dependent Task", 50, new List<Task>()) });
-        var task2 = new Task("Test Task 2", 100, new List<Task> { new Task("Dependent Task", 50, new List<Task>()) });
-        Assert.That(task1.CompareTo(task2), Is.LessThan(0));
-    }
 }

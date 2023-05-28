@@ -6,7 +6,7 @@ namespace ProjectManagementSystem.ConsoleUI;
 
 public class Program
 {
-    public static void Main(string[] args)
+    static async Task Main(string[] args)
     {
         var state = new State();
         string? currentFilePath = null;
@@ -29,11 +29,11 @@ public class Program
                     {
                         case "Continue":
                             var filePath = Interface.ShowImportTasksFilePrompt();
-                            AnsiConsole.Status()
+                            await AnsiConsole.Status()
                                 .Spinner(Spinner.Known.Dots2)
-                                .Start("Importing tasks...", ctx =>
+                                .StartAsync("Importing tasks...", async ctx =>
                                 {
-                                    new ImportTasksCommand(filePath).Execute(state);
+                                    await new ImportTasksCommand(filePath).Execute(state);
                                     currentFilePath = filePath;
                                 });
                             break;
@@ -48,12 +48,12 @@ public class Program
                             if (currentFilePath == null)
                             {
                                 var filePath = Interface.ShowSaveTasksFilePrompt();
-                                new SaveTasksCommand(filePath).Execute(state);
+                                await new SaveTasksCommand(filePath).Execute(state);
                                 currentFilePath = filePath;
                             }
                             else
                             {
-                                new SaveTasksCommand(currentFilePath).Execute(state);
+                                await new SaveTasksCommand(currentFilePath).Execute(state);
                             }
                             break;
                         case "Back":
@@ -64,7 +64,7 @@ public class Program
                     switch (Interface.ShowSaveOrderedTasksConfirmation())
                     {
                         case "Continue":
-                            new SaveOrderedTasksCommand().Execute(state);
+                            await new SaveOrderedTasksCommand().Execute(state);
                             break;
                         case "Back":
                             break;
@@ -74,7 +74,7 @@ public class Program
                     switch (Interface.ShowSaveOptimizedTasksConfirmation())
                     {
                         case "Continue":
-                            new SaveOptimizedTasksCommand().Execute(state);
+                            await new SaveOptimizedTasksCommand().Execute(state);
                             break;
                         case "Back":
                             break;

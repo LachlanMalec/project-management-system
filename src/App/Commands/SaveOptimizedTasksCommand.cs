@@ -1,16 +1,10 @@
 using ProjectManagementSystem.App.FileUtils;
-using ProjectManagementSystem.Core;
 namespace ProjectManagementSystem.App.Commands;
 
 public class SaveOptimizedTasksCommand
 {
-    public void Execute(State state)
+    public async Task Execute(State state)
     {
-        if (state.OptimizedTasks == null)
-        {
-            throw new InvalidOperationException("No tasks to save.");
-        }
-        var taskCollection = new TaskCollection(state.OptimizedTasks);
-        TaskFileWriter.Write("EarliestTimes.txt", taskCollection);
+        await TaskFileWriter.Write("EarliestTimes.txt", await state.OptimizedTasks());
     }
 }

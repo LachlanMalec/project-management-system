@@ -14,7 +14,7 @@ public class Task : IComparable<Task>, IEquatable<Task>
     /// <summary>
     /// The time the task will take to complete.
     /// </summary>
-    public int TimeToComplete { get; }
+    public int TimeToComplete { get; set; }
     
     /// <summary>
     /// The tasks on which this task depends.
@@ -51,6 +51,7 @@ public class Task : IComparable<Task>, IEquatable<Task>
     /// <returns>Less than zero if this task precedes the other task in the sort order, greater than zero if this task follows the other task in the sort order, and 0 if the tasks are equal in the sort order.</returns>
     public int CompareTo(Task task)
     {
-        return Id.CompareTo(task.Id);
+        Console.WriteLine($"Comparing {Id} to {task.Id}");
+        return string.CompareOrdinal(Id, task.Id);
     }
 }

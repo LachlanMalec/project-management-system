@@ -1,5 +1,7 @@
 using ProjectManagementSystem.Core;
-using Task = ProjectManagementSystem.Core.Task;
+using TaskEntity = ProjectManagementSystem.Core.Task;
+using System.Threading.Tasks;
+using Task = System.Threading.Tasks.Task;
 
 namespace ProjectManagementSystem.App.FileUtils;
 
@@ -29,31 +31,24 @@ public static class TaskFileReader
     /// </summary>
     /// <param name="filePath">The file to read the task collection from.</param>
     /// <returns>A new TaskCollection that was stored in the file.</returns>
-    public static TaskCollection Read(string filePath)
+    public static Task<TaskCollection> Read(string filePath)
     {
-        var taskRecords = new List<TaskRecord>();
-        using var reader = new StreamReader(filePath);
-        while (!reader.EndOfStream)
-        {
-            var line = reader.ReadLine();
-            var taskRecord = ReadTaskRecord(line);
-            taskRecords.Add(taskRecord);
-        }
+        var taskRecords = File.ReadAllLines(filePath).AsParallel().Select(ReadTaskRecord).ToList();
 
-        var tasks = new List<Task>();
+        var tasks = new SortedList<string, TaskEntity>();
         foreach (var taskRecord in taskRecords)
         {
-            var dependencies = new List<Task>();
+            var dependencies = new List<TaskEntity>();
             foreach (var dependency in taskRecord.Dependencies)
             {
-                var task = tasks.Find(t => t.Id == dependency);
-                if (task == null) throw new InvalidOperationException($"No task with ID {dependency} exists.");
-                dependencies.Add(task);
+                var dependencyTask = tasks.TryGetValue(dependency, out var task) ? task : throw new Exception($"Task {dependency} does not exist.");;
+                dependencies.Add(dependencyTask);
             }
-
-            var newTask = new Task(taskRecord.Id, taskRecord.TimeToComplete, dependencies);
-            tasks.Add(newTask);
+            var newTask = new TaskEntity(taskRecord.Id, taskRecord.TimeToComplete, dependencies);
+            tasks.Add(taskRecord.Id, newTask);
         }
-        return new TaskCollection(tasks);
+        var taskCollection = new TaskCollection();
+        taskCollection.AddRange(tasks.Values);
+        return Task.FromResult(taskCollection);
     }
 }

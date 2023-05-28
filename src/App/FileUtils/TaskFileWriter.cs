@@ -1,6 +1,5 @@
-using ProjectManagementSystem.Core;
-using Task = ProjectManagementSystem.Core.Task;
-
+using TaskCollection = ProjectManagementSystem.Core.TaskCollection;
+using TaskEntity = ProjectManagementSystem.Core.Task;
 namespace ProjectManagementSystem.App.FileUtils;
 
 public static class TaskFileWriter
@@ -10,7 +9,7 @@ public static class TaskFileWriter
     /// </summary>
     /// <param name="task">The task to create a task record for.</param>
     /// <returns></returns>
-    private static TaskRecord CreateTaskRecord(Task task)
+    private static TaskRecord CreateTaskRecord(TaskEntity task)
     {
         var taskRecord = new TaskRecord
         {
@@ -24,18 +23,18 @@ public static class TaskFileWriter
     /// <summary>
     /// Writes a task collection to the specified file, overwriting the file if it already exists.
     /// </summary>
-    /// <param name="taskCollection">The task collection to write out to the file.</param>
+    /// <param name="tasks">The task collection to write out to the file.</param>
     /// <param name="filePath">The file to write the task collection to.</param>
-    public static void Write(string filePath, TaskCollection taskCollection)
+    public static async Task Write(string filePath, TaskCollection tasks)
     {
-        var taskRecords = taskCollection.Tasks.Select(CreateTaskRecord).ToList();
+        var taskRecords = tasks.AsParallel().Select(CreateTaskRecord).ToList();
         if (File.Exists(filePath)) File.Delete(filePath);
-        using var writer = new StreamWriter(filePath);
+        await using var writer = new StreamWriter(filePath);
         foreach (var taskRecord in taskRecords)
         {
-            var line = $"{taskRecord.Id},{taskRecord.TimeToComplete}";
-            foreach (var dependency in taskRecord.Dependencies) line += $",{dependency}";
-            writer.WriteLine(line);
+            var line = $"{taskRecord.Id}, {taskRecord.TimeToComplete}";
+            foreach (var dependency in taskRecord.Dependencies) line += $", {dependency}";
+            await writer.WriteLineAsync(line);
         }
     }
 }

@@ -9,13 +9,8 @@ public class SaveTasksCommand
         _filePath = filePath;
     }
     
-    public void Execute(State state)
+    public async Task Execute(State state)
     {
-        if (state.TaskCollection == null)
-        {
-            throw new InvalidOperationException("No tasks to save.");
-        }
-        
-        TaskFileWriter.Write(_filePath, state.TaskCollection);
+        await TaskFileWriter.Write(_filePath, state.Tasks);
     }
 }

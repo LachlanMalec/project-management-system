@@ -1,4 +1,4 @@
-using Task = ProjectManagementSystem.Core.Task;
+using TaskEntity = ProjectManagementSystem.Core.Task;
 namespace ProjectManagementSystem.App.Commands;
 
 public class CreateTaskCommand
@@ -16,18 +16,13 @@ public class CreateTaskCommand
     
     public void Execute(State state)
     {
-        if (state.TaskCollection == null)
-        {
-            throw new InvalidOperationException("No tasks to add to.");
-        }
-        
-        var dependencies = new List<Task>();
+        var dependencies = new List<TaskEntity>();
 
         if (_dependencies.Count > 0)
         {
             foreach (var dependency in _dependencies)
             {
-                var task = state.TaskCollection.Find(dependency);
+                var task = state.Tasks.FindById(dependency);
 
                 if (task == null)
                 {
@@ -38,9 +33,8 @@ public class CreateTaskCommand
             }
         }
 
-        var newTask = new Task(_id, _timeToComplete, dependencies);
+        var newTask = new TaskEntity(_id, _timeToComplete, dependencies);
         
-        state.TaskCollection.Add(newTask);
-        state.FlushOptimizedTasks();
+        state.AddTask(newTask);
     }
 }

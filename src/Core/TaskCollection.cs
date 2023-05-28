@@ -1,49 +1,15 @@
 namespace ProjectManagementSystem.Core;
 
-/// <summary>
-/// A collection of tasks.
-/// </summary>
-public class TaskCollection
+public class TaskCollection : List<Task>
 {
     /// <summary>
-    /// The tasks in the collection.
+    /// Finds a task by ID.
     /// </summary>
-    public List<Task> Tasks { get; }
-    
-    /// <summary>
-    /// Creates a new task collection.
-    /// </summary>
-    /// <param name="tasks">The tasks in the collection.</param>
-    public TaskCollection(List<Task> tasks)
+    /// <param name="id"></param>
+    /// <returns>The task with the matching id, or null if it does not exist.</returns>
+    public Task? FindById(string id)
     {
-        Tasks = tasks;
-    }
-    
-    /// <summary>
-    /// Adds a task to the collection.
-    /// </summary>
-    /// <param name="task">The task to add.</param>
-    public void Add(Task task)
-    {
-        Tasks.Add(task);
-    }
-    
-    /// <summary>
-    /// Removes a task from the collection.
-    /// </summary>
-    /// <param name="task">The task to remove.</param>
-    public void Remove(Task task)
-    {
-        Tasks.Remove(task);
-    }
-    
-    /// <summary>
-    /// Finds a task with the specified ID.
-    /// </summary>
-    /// <param name="id">The ID of the task to find.</param>
-    /// <returns>The task with the specified ID, or null if no such task exists.</returns>
-    public Task? Find(string id)
-    {
-        return Tasks.Find(task => task.Id == id);
+        var index = FindIndex(task => task.Id == id);
+        return index < 0 ? null : this[index];
     }
 }
