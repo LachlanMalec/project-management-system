@@ -4,22 +4,18 @@ namespace ProjectManagementSystem.Core;
 
 public class TaskOptimizer
 {
-    private Dictionary<string, TaskEntity> _tasks;
-    private HashSet<Tuple<string, string>> _edges;
+    private TaskCollection _tasks;
+    private HashSet<Tuple<TaskEntity, TaskEntity>> _edges;
     
     public TaskOptimizer(TaskCollection tasks)
     {
-        _tasks = new Dictionary<string, TaskEntity>();
-        foreach (var task in tasks)
-        {
-            _tasks.Add(task.Id, task);
-        }
-        _edges = new HashSet<Tuple<string, string>>();
+        _tasks = tasks;
+        _edges = new HashSet<Tuple<TaskEntity, TaskEntity>>();
         foreach (var task in tasks)
         {
             foreach (var dependency in task.Dependencies)
             {
-                _edges.Add(new Tuple<string, string>(dependency.Id, task.Id));
+                _edges.Add(new Tuple<TaskEntity, TaskEntity>(dependency, task));
             }
         }
     }
@@ -27,19 +23,20 @@ public class TaskOptimizer
     public TaskCollection Optimize()
     {
         // List of optimized tasks.
-        var l = new List<string>();
+        var l = new TaskCollection();
         
-        Console.WriteLine("Creating set of indegree 0 nodes.");
-        var s = new HashSet<string>();
-        foreach (var (id, task) in _tasks.Select(x => (x.Key, x.Value)))
+        Console.WriteLine("Optimizing tasks.");
+        // Set of tasks with no incoming edges.
+        var s = new SortedSet<TaskEntity>();
+        foreach (var task in _tasks)
         {
             if (task.Dependencies.Count == 0)
             {
-                s.Add(id);
+                s.Add(task);
             }
         }
-        Console.WriteLine("Created set of indegree 0 nodes.");
-        
+        Console.WriteLine($"Found {s.Count} tasks with no dependencies.");
+
         // While there are nodes with no incoming edges.
         while (s.Any())
         {
@@ -50,10 +47,10 @@ public class TaskOptimizer
             // Add the node to the optimized task collection.
             l.Add(n);
             
-            Console.WriteLine($"Optimizing node {n}.");
+            Console.WriteLine($"Optimizing node {n.Id}.");
 
             // Remove all outgoing edges from the node.
-            var toRemove = new List<Tuple<string, string>>();
+            var toRemove = new List<Tuple<TaskEntity, TaskEntity>>();
             foreach (var edge in _edges)
             {
                 if (edge.Item1 == n)
@@ -71,9 +68,10 @@ public class TaskOptimizer
             // For each node that had an edge removed, if it now has no incoming edges, add it to the set of nodes with no incoming edges.
             foreach (var edge in toRemove)
             {
-                if (_edges.All(x => x.Item2 != edge.Item2))
+                var m = edge.Item2;
+                if (_edges.All(e => e.Item2 != m))
                 {
-                    s.Add(edge.Item2);
+                    s.Add(m);
                 }
             }
         }
@@ -83,10 +81,7 @@ public class TaskOptimizer
         {
             throw new Exception("Cycle detected.");
         }
-
-        // Create the optimized task collection.
-        var taskCollection = new TaskCollection();
-        taskCollection.AddRange(l.Select(optimizedTask => _tasks[optimizedTask]));
-        return taskCollection;
+        
+        return l;
     }
 }
