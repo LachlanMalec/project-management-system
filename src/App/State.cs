@@ -1,3 +1,5 @@
+using ProjectManagementSystem.Core;
+using Task = System.Threading.Tasks.Task;
 using TaskEntity = ProjectManagementSystem.Core.Task;
 using TaskCollection = ProjectManagementSystem.Core.TaskCollection;
 
@@ -71,9 +73,7 @@ public class State
     public Task<TaskCollection> OptimizedTasks()
     {
         if (_optimizedTasks != null) return Task.FromResult(_optimizedTasks);
-        //TODO: Optimize the tasks.
-        //_optimizedTasks = Tasks.Optimized();
-        _optimizedTasks = Tasks;
+        _optimizedTasks = new TaskOptimizer(Tasks).Optimize();
         return Task.FromResult(_optimizedTasks);
     }
     

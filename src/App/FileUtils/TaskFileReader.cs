@@ -33,7 +33,7 @@ public static class TaskFileReader
     /// <returns>A new TaskCollection that was stored in the file.</returns>
     public static Task<TaskCollection> Read(string filePath)
     {
-        var taskRecords = File.ReadAllLines(filePath).AsParallel().Select(ReadTaskRecord).ToList();
+        var taskRecords = File.ReadAllLines(filePath).Select(ReadTaskRecord).ToList().AsParallel();
 
         var tasks = new SortedList<string, TaskEntity>();
         foreach (var taskRecord in taskRecords)
