@@ -18,6 +18,8 @@ public class TaskOptimizer
                 _edges.Add(new Tuple<TaskEntity, TaskEntity>(dependency, task));
             }
         }
+        Console.WriteLine($"{_tasks.Count} tasks.");
+        Console.WriteLine($"{_edges.Count} edges.");
     }
 
     public TaskCollection Optimize()
@@ -27,7 +29,7 @@ public class TaskOptimizer
         
         Console.WriteLine("Optimizing tasks.");
         // Set of tasks with no incoming edges.
-        var s = new SortedSet<TaskEntity>();
+        var s = new HashSet<TaskEntity>();
         foreach (var task in _tasks)
         {
             if (task.Dependencies.Count == 0)

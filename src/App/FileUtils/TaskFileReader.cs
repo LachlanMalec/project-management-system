@@ -35,20 +35,19 @@ public static class TaskFileReader
     {
         var taskRecords = File.ReadAllLines(filePath).Select(ReadTaskRecord).ToList().AsParallel();
 
-        var tasks = new SortedList<string, TaskEntity>();
+        var tasks = new TaskCollection();
         foreach (var taskRecord in taskRecords)
         {
             var dependencies = new List<TaskEntity>();
             foreach (var dependency in taskRecord.Dependencies)
             {
-                var dependencyTask = tasks.TryGetValue(dependency, out var task) ? task : throw new Exception($"Task {dependency} does not exist.");;
+                var dependencyTask = tasks.FindById(dependency);
+                if (dependencyTask == null) throw new Exception($"Task {dependency} does not exist.");
                 dependencies.Add(dependencyTask);
             }
             var newTask = new TaskEntity(taskRecord.Id, taskRecord.TimeToComplete, dependencies);
-            tasks.Add(taskRecord.Id, newTask);
+            tasks.Add(newTask);
         }
-        var taskCollection = new TaskCollection();
-        taskCollection.AddRange(tasks.Values);
-        return Task.FromResult(taskCollection);
+        return Task.FromResult(tasks);
     }
 }
