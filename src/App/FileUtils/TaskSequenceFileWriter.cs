@@ -14,9 +14,9 @@ public class TaskSequenceFileWriter
         // Get the IDs of the tasks in the order they appear in the collection
         var taskIds = tasks.Select(task => task.Id).ToList();
         // Add a space to the end of every task ID as per the spec
-        foreach (var taskId in taskIds)
+        for(var i = 0; i < taskIds.Count; i++)
         {
-            taskIds[taskIds.IndexOf(taskId)] = $"{taskId} ";
+            taskIds[i] += " ";
         }
         if (File.Exists(filePath)) File.Delete(filePath);
         await using var writer = new StreamWriter(filePath);
