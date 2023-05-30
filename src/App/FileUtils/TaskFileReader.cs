@@ -33,21 +33,28 @@ public static class TaskFileReader
     /// <returns>A new TaskCollection that was stored in the file.</returns>
     public static Task<TaskCollection> Read(string filePath)
     {
-        var taskRecords = File.ReadAllLines(filePath).Select(ReadTaskRecord).ToList().AsParallel();
+        var taskRecords = File.ReadAllLines(filePath).Select(ReadTaskRecord).ToList();
 
         var tasks = new TaskCollection();
+        
         foreach (var taskRecord in taskRecords)
         {
-            var dependencies = new List<TaskEntity>();
-            foreach (var dependency in taskRecord.Dependencies)
-            {
-                var dependencyTask = tasks.FindById(dependency);
-                if (dependencyTask == null) throw new Exception($"Task {dependency} does not exist.");
-                dependencies.Add(dependencyTask);
-            }
-            var newTask = new TaskEntity(taskRecord.Id, taskRecord.TimeToComplete, dependencies);
+            var newTask = new TaskEntity(taskRecord.Id, taskRecord.TimeToComplete, new List<TaskEntity>());
             tasks.Add(newTask);
         }
+
+        for(var i = 0; i < taskRecords.Count; i++)
+        {
+            var taskRecord = taskRecords.ElementAt(i);
+            var task = tasks[i];
+            foreach (var dependencyId in taskRecord.Dependencies)
+            {
+                var dependency = tasks.First(t => t.Id == dependencyId);
+                if (dependency == null) throw new Exception($"Task {task.Id} depends on task {dependencyId} which does not exist.");
+                task.Dependencies.Add(dependency);
+            }
+        }
+        
         return Task.FromResult(tasks);
     }
 }
