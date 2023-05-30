@@ -15,20 +15,18 @@ public class State
     /// </summary>
     private TaskCollection _tasks;
     
-    // Memoization of ordered tasks.
-    private TaskCollection? _orderedTasks;
+    /// <summary>
+    /// The TaskOptimizer instance. It will internally memoize the results of its operations.
+    /// </summary>
+    private TaskOptimizer? _optimizer;
 
-    // Memoization of optimized tasks.
-    private TaskCollection? _optimizedTasks;
-    
     /// <summary>
     /// Initializes application state.
     /// </summary>
     public State()
     {
         _tasks = new TaskCollection();
-        _orderedTasks = null;
-        _optimizedTasks = null;
+        _optimizer = null;
     }
     
     /// <summary>
@@ -40,8 +38,7 @@ public class State
         set
         {
             _tasks = value;
-            _optimizedTasks = null;
-            _orderedTasks = null;
+            _optimizer = null;
         }
     }
     
@@ -52,8 +49,7 @@ public class State
     public void AddTask(TaskEntity task)
     {
         _tasks.Add(task);
-        _optimizedTasks = null;
-        _orderedTasks = null;
+        _optimizer = null;
     }
 
     /// <summary>
@@ -65,24 +61,20 @@ public class State
     {
         var index = _tasks.FindIndex(t => t.Id == id);
         _tasks[index].TimeToComplete = duration;
-        // TODO: Possibly clear memoized tasks orderings.
-        //_optimizedTasks = null;
-        //_orderedTasks = null;
+        _optimizer = null;
     }
 
     public Task<TaskCollection> OptimizedTasks()
     {
-        if (_optimizedTasks != null) return Task.FromResult(_optimizedTasks);
-        _optimizedTasks = new TaskOptimizer(Tasks).Optimize();
-        return Task.FromResult(_optimizedTasks);
+        if (_optimizer != null) return Task.FromResult(_optimizer.Optimize());
+        _optimizer = new TaskOptimizer(Tasks);
+        return Task.FromResult(_optimizer.Optimize());
     }
     
     public Task<TaskCollection> OrderedTasks()
     {
-        if (_orderedTasks != null) return Task.FromResult(_orderedTasks);
-        //TODO: Order the tasks.
-        //_orderedTasks = Tasks.Ordered();
-        _orderedTasks = Tasks;
-        return Task.FromResult(_orderedTasks);
+        if (_optimizer != null) return Task.FromResult(_optimizer.Order());
+        _optimizer = new TaskOptimizer(Tasks);
+        return Task.FromResult(_optimizer.Order());
     }
 }
