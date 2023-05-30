@@ -5,6 +5,6 @@ public class SaveOrderedTasksCommand
 {
     public async Task Execute(State state)
     {
-        await TaskFileWriter.Write("Sequence.txt", await state.OrderedTasks());
+        await TaskSequenceFileWriter.Write("Sequence.txt", await state.OrderedTasks());
     }
 }
