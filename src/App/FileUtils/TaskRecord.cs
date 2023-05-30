@@ -1,7 +1,7 @@
 namespace ProjectManagementSystem.App.FileUtils;
 
 /// <summary>
-/// Represents a Task stored in a CSV file.
+/// Represents a Task stored in a file.
 /// </summary>
 public class TaskRecord
 {
