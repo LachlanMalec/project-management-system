@@ -7,6 +7,9 @@ public class TaskOptimizer
     private TaskCollection _tasks;
     private HashSet<Tuple<TaskEntity, TaskEntity>> _edges;
     
+    // Memoization of topologically sorted tasks.
+    private TaskCollection? _topologicalOrder;
+
     public TaskOptimizer(TaskCollection tasks)
     {
         _tasks = tasks;
@@ -22,7 +25,26 @@ public class TaskOptimizer
         Console.WriteLine($"{_edges.Count} edges.");
     }
 
+    public TaskCollection Order()
+    {
+        if (_topologicalOrder == null)
+        {
+            TopologicalSort();
+        }
+        return _topologicalOrder!;
+    }
+
     public TaskCollection Optimize()
+    {
+        if (_topologicalOrder == null)
+        {
+            TopologicalSort();
+        }
+        // TODO: Optimize the tasks.
+        return _topologicalOrder;
+    }
+
+    private void TopologicalSort()
     {
         // List of optimized tasks.
         var l = new TaskCollection();
@@ -84,6 +106,6 @@ public class TaskOptimizer
             throw new Exception("Cycle detected.");
         }
         
-        return l;
+        _topologicalOrder = l;
     }
 }
