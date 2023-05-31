@@ -5,6 +5,6 @@ public class SaveOptimizedTasksCommand
 {
     public async Task Execute(State state)
     {
-        await TaskFileWriter.Write("EarliestTimes.txt", await state.OptimizedTasks());
+        await TaskStartTimesFileWriter.Write("EarliestTimes.txt", await state.OptimizedTasks());
     }
 }

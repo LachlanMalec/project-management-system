@@ -32,16 +32,64 @@ public class TaskOptimizer
         return _topologicalOrder!;
     }
 
-    public TaskCollection Optimize()
+    public Dictionary<TaskEntity, int> Optimize()
     {
+        // Get the topological order.
         if (_topologicalOrder == null)
         {
             TopologicalSort();
         }
-        // TODO: Optimize the tasks.
-        return _topologicalOrder;
+        
+        var endTimes = new Dictionary<TaskEntity, int>();
+        
+        // Calculate the end time of each task.
+        foreach (var task in _topologicalOrder!)
+        {
+            CalculateEndTime(task, endTimes);
+        }
+        
+        var startTimes = new Dictionary<TaskEntity, int>();
+        
+        // Calculate the start time of each task.
+        foreach (var task in endTimes)
+        {
+            startTimes.Add(task.Key, task.Value - task.Key.TimeToComplete);
+        }
+        
+        return startTimes;
+    }
+    
+    /// <summary>
+    /// Calculates the end time of a task.
+    /// </summary>
+    /// <param name="task">The task to calculate the end time of.</param>
+    /// <param name="endTimes">The dictionary of end already calculated end times.</param>
+    private void CalculateEndTime(TaskEntity task, Dictionary<TaskEntity, int> endTimes)
+    {
+        if (endTimes.TryGetValue(task, out var time))
+        {
+            return;
+        }
+        
+        var max = 0;
+        foreach (var dependency in task.Dependencies)
+        {
+            var dependencyStartTime = endTimes[dependency];
+            if (dependencyStartTime > max)
+            {
+                max = dependencyStartTime;
+            }
+        }
+        
+        var startTime = max + task.TimeToComplete;
+        
+        endTimes.Add(task, startTime);
     }
 
+    /// <summary>
+    /// A topological sort using Kahn's algorithm.
+    /// </summary>
+    /// <exception cref="Exception"></exception>
     private void TopologicalSort()
     {
         // List of optimized tasks.

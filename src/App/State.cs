@@ -64,7 +64,7 @@ public class State
         _optimizer = null;
     }
 
-    public Task<TaskCollection> OptimizedTasks()
+    public Task<Dictionary<TaskEntity, int>> OptimizedTasks()
     {
         if (_optimizer != null) return Task.FromResult(_optimizer.Optimize());
         _optimizer = new TaskOptimizer(Tasks);

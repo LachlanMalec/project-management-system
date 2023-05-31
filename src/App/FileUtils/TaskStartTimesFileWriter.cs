@@ -8,13 +8,13 @@ public static class TaskStartTimesFileWriter
     /// </summary>
     /// <param name="taskStartTimes">The task entity and it's start time.</param>
     /// <param name="filePath">The file to write the task collection to.</param>
-    public static async Task Write(string filePath, List<Tuple<TaskEntity, int>> taskStartTimes)
+    public static async Task Write(string filePath, Dictionary<TaskEntity, int> taskStartTimes)
     {
         if (File.Exists(filePath)) File.Delete(filePath);
         await using var writer = new StreamWriter(filePath);
         foreach (var task in taskStartTimes)
         {
-            var line = $"{task.Item1.Id}, {task.Item2}";
+            var line = $"{task.Key.Id}, {task.Value}";
             await writer.WriteLineAsync(line);
         }
     }
