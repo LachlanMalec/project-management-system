@@ -2,7 +2,7 @@ using TaskCollection = ProjectManagementSystem.Core.TaskCollection;
 using TaskEntity = ProjectManagementSystem.Core.Task;
 namespace ProjectManagementSystem.App.FileUtils;
 
-public class TaskSequenceFileWriter
+public static class TaskSequenceFileWriter
 {
     /// <summary>
     /// Writes a task collection to the specified file, overwriting the file if it already exists.
