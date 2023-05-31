@@ -4,8 +4,8 @@ namespace ProjectManagementSystem.Core;
 
 public class TaskOptimizer
 {
-    private TaskCollection _tasks;
-    private HashSet<Tuple<TaskEntity, TaskEntity>> _edges;
+    private readonly TaskCollection _tasks;
+    private readonly HashSet<Tuple<TaskEntity, TaskEntity>> _edges;
     
     // Memoization of topologically sorted tasks.
     private TaskCollection? _topologicalOrder;
