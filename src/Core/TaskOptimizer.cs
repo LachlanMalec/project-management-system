@@ -21,8 +21,6 @@ public class TaskOptimizer
                 _edges.Add(new Tuple<TaskEntity, TaskEntity>(dependency, task));
             }
         }
-        Console.WriteLine($"{_tasks.Count} tasks.");
-        Console.WriteLine($"{_edges.Count} edges.");
     }
 
     public TaskCollection Order()
@@ -49,7 +47,6 @@ public class TaskOptimizer
         // List of optimized tasks.
         var l = new TaskCollection();
         
-        Console.WriteLine("Optimizing tasks.");
         // Set of tasks with no incoming edges.
         var s = new HashSet<TaskEntity>();
         foreach (var task in _tasks)
@@ -59,7 +56,6 @@ public class TaskOptimizer
                 s.Add(task);
             }
         }
-        Console.WriteLine($"Found {s.Count} tasks with no dependencies.");
 
         // While there are nodes with no incoming edges.
         while (s.Any())
@@ -70,8 +66,6 @@ public class TaskOptimizer
             
             // Add the node to the optimized task collection.
             l.Add(n);
-            
-            Console.WriteLine($"Optimizing node {n.Id}.");
 
             // Remove all outgoing edges from the node.
             var toRemove = new List<Tuple<TaskEntity, TaskEntity>>();
