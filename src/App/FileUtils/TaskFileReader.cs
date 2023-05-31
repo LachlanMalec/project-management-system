@@ -37,12 +37,15 @@ public static class TaskFileReader
 
         var tasks = new TaskCollection();
         
+        // Create a new task for each task record
+        // Dependencies are not added yet because the tasks may not exist yet
         foreach (var taskRecord in taskRecords)
         {
             var newTask = new TaskEntity(taskRecord.Id, taskRecord.TimeToComplete, new List<TaskEntity>());
             tasks.Add(newTask);
         }
 
+        // Add dependencies to each task
         for(var i = 0; i < taskRecords.Count; i++)
         {
             var taskRecord = taskRecords.ElementAt(i);
@@ -55,6 +58,7 @@ public static class TaskFileReader
             }
         }
         
+        // Return the task collection
         return Task.FromResult(tasks);
     }
 }
