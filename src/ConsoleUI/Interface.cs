@@ -1,16 +1,16 @@
+using Spectre.Console.Rendering;
+
 namespace ProjectManagementSystem.ConsoleUI;
 using Spectre.Console;
 public static class Interface
 {
-    public static void ShowSplash()
-    {
-        AnsiConsole.Write(new FigletText("Project Management System").LeftJustified().Color(Color.Aqua));
-    }
-    
     public static string ShowMainMenu()
     {
+        var panel = new Panel("Use the arrow keys to navigate the menu. Press enter to select an option.")
+            .Header("[bold aqua]Main Menu[/]")
+            .RoundedBorder();
+        AnsiConsole.Write(panel);
         var menu = new SelectionPrompt<string>()
-            .Title("Main Menu")
             .AddChoices(new[] { "Create Task", "Import Tasks (from file)", "Save Tasks (to file)", "Save Ordered Tasks (to file)", "Save Optimized Tasks (to file)", "Exit" });
         return menu.Show(AnsiConsole.Console);
     }

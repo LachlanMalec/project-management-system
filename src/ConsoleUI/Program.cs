@@ -10,7 +10,6 @@ public class Program
     {
         var state = new State();
         string? currentFilePath = null;
-        Interface.ShowSplash();
 
         while (true)
         {
