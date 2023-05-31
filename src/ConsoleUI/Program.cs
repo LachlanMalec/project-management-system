@@ -14,82 +14,101 @@ public class Program
 
         while (true)
         {
-            var mainMenuChoice = Interface.ShowMainMenu();
-            switch (mainMenuChoice)
+            try
             {
-                case "Create Task":
-                    var newTaskId = Interface.ShowCreateTaskIdPrompt();
-                    var newTaskTimeToComplete = int.Parse(Interface.ShowCreateTaskTimeToCompletePrompt());
-                    var newTaskDependencies = Interface.ShowCreateTaskDependenciesPrompt().Split(",").ToList();
-                    newTaskDependencies.RemoveAll(s => s == "");
-                    new CreateTaskCommand(newTaskId, newTaskTimeToComplete, newTaskDependencies).Execute(state);
-                    break;
-                case "Import Tasks (from file)":
-                    switch (Interface.ShowImportTasksConfirmation())
-                    {
-                        case "Continue":
-                            var filePath = Interface.ShowImportTasksFilePrompt();
-                            await AnsiConsole.Status()
-                                .Spinner(Spinner.Known.Dots2)
-                                .StartAsync("Importing tasks...", async ctx =>
+                var mainMenuChoice = Interface.ShowMainMenu();
+                switch (mainMenuChoice)
+                {
+                    case "Create Task":
+                        var newTaskId = Interface.ShowCreateTaskIdPrompt();
+                        var newTaskTimeToComplete = int.Parse(Interface.ShowCreateTaskTimeToCompletePrompt());
+                        var newTaskDependencies = Interface.ShowCreateTaskDependenciesPrompt().Split(",").ToList();
+                        newTaskDependencies.RemoveAll(s => s == "");
+                        new CreateTaskCommand(newTaskId, newTaskTimeToComplete, newTaskDependencies).Execute(state);
+                        break;
+                    case "Import Tasks (from file)":
+                        switch (Interface.ShowImportTasksConfirmation())
+                        {
+                            case "Continue":
+                                var filePath = Interface.ShowImportTasksFilePrompt();
+                                await AnsiConsole.Status()
+                                    .Spinner(Spinner.Known.Dots2)
+                                    .StartAsync("Importing tasks...", async ctx =>
+                                    {
+                                        await new ImportTasksCommand(filePath).Execute(state);
+                                        currentFilePath = filePath;
+                                    });
+                                break;
+                            case "Back":
+                                break;
+                        }
+
+                        break;
+                    case "Save Tasks (to file)":
+                        switch (Interface.ShowSaveTasksConfirmation())
+                        {
+                            case "Continue":
+                                if (currentFilePath == null)
                                 {
-                                    await new ImportTasksCommand(filePath).Execute(state);
+                                    var filePath = Interface.ShowSaveTasksFilePrompt();
+                                    await new SaveTasksCommand(filePath).Execute(state);
                                     currentFilePath = filePath;
-                                });
-                            break;
-                        case "Back":
-                            break;
-                    }
-                    break;
-                case "Save Tasks (to file)":
-                    switch(Interface.ShowSaveTasksConfirmation())
-                    {
-                        case "Continue":
-                            if (currentFilePath == null)
-                            {
-                                var filePath = Interface.ShowSaveTasksFilePrompt();
-                                await new SaveTasksCommand(filePath).Execute(state);
-                                currentFilePath = filePath;
-                            }
-                            else
-                            {
-                                await new SaveTasksCommand(currentFilePath).Execute(state);
-                            }
-                            break;
-                        case "Back":
-                            break;
-                    }
-                    break;
-                case "Save Ordered Tasks (to file)":
-                    switch (Interface.ShowSaveOrderedTasksConfirmation())
-                    {
-                        case "Continue":
-                            await new SaveOrderedTasksCommand().Execute(state);
-                            break;
-                        case "Back":
-                            break;
-                    }
-                    break;
-                case "Save Optimized Tasks (to file)":
-                    switch (Interface.ShowSaveOptimizedTasksConfirmation())
-                    {
-                        case "Continue":
-                            await new SaveOptimizedTasksCommand().Execute(state);
-                            break;
-                        case "Back":
-                            break;
-                    }
-                    break;
-                case "Exit":
-                    switch (Interface.ShowExitConfirmation())
-                    {
-                        case "Exit":
-                            Environment.Exit(0);
-                            break;
-                        case "Back":
-                            break;
-                    }
-                    break;
+                                }
+                                else
+                                {
+                                    await new SaveTasksCommand(currentFilePath).Execute(state);
+                                }
+
+                                break;
+                            case "Back":
+                                break;
+                        }
+
+                        break;
+                    case "Save Ordered Tasks (to file)":
+                        switch (Interface.ShowSaveOrderedTasksConfirmation())
+                        {
+                            case "Continue":
+                                var filePath = Interface.ShowImportTasksFilePrompt();
+                                await AnsiConsole.Status()
+                                    .Spinner(Spinner.Known.Dots2)
+                                    .StartAsync("Saving valid task order...", async ctx =>
+                                    {
+                                        await new SaveOrderedTasksCommand().Execute(state);
+                                        currentFilePath = filePath;
+                                    });
+                                break;
+                            case "Back":
+                                break;
+                        }
+
+                        break;
+                    case "Save Optimized Tasks (to file)":
+                        switch (Interface.ShowSaveOptimizedTasksConfirmation())
+                        {
+                            case "Continue":
+                                await new SaveOptimizedTasksCommand().Execute(state);
+                                break;
+                            case "Back":
+                                break;
+                        }
+
+                        break;
+                    case "Exit":
+                        switch (Interface.ShowExitConfirmation())
+                        {
+                            case "Exit":
+                                Environment.Exit(0);
+                                break;
+                            case "Back":
+                                break;
+                        }
+
+                        break;
+                }
+            } catch (Exception e)
+            {
+                Interface.ShowError(e.Message);
             }
         }
     }
