@@ -69,13 +69,11 @@ public class Program
                         switch (Interface.ShowSaveOrderedTasksConfirmation())
                         {
                             case "Continue":
-                                var filePath = Interface.ShowImportTasksFilePrompt();
                                 await AnsiConsole.Status()
                                     .Spinner(Spinner.Known.Dots2)
                                     .StartAsync("Saving valid task order...", async ctx =>
                                     {
                                         await new SaveOrderedTasksCommand().Execute(state);
-                                        currentFilePath = filePath;
                                     });
                                 break;
                             case "Back":
