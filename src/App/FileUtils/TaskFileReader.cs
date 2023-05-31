@@ -49,7 +49,7 @@ public static class TaskFileReader
             var task = tasks[i];
             foreach (var dependencyId in taskRecord.Dependencies)
             {
-                var dependency = tasks.First(t => t.Id == dependencyId);
+                var dependency = tasks.FirstOrDefault(t => t.Id == dependencyId);
                 if (dependency == null) throw new Exception($"Task {task.Id} depends on task {dependencyId} which does not exist.");
                 task.Dependencies.Add(dependency);
             }
