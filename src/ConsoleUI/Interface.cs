@@ -96,4 +96,11 @@ public static class Interface
             .AddChoices(new[] { "Exit", "Back" });
         return menu.Show(AnsiConsole.Console);
     }
+    
+    public static string ShowError(string message)
+    {
+        var prompt = new TextPrompt<string>(message)
+            .PromptStyle("red");
+        return prompt.Show(AnsiConsole.Console);
+    }
 }
