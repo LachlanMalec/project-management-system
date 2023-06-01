@@ -38,6 +38,30 @@ public static class Interface
             .AllowEmpty();
         return prompt.Show(AnsiConsole.Console);
     }
+
+    public static string ShowUpdateTaskIdPrompt()
+    {
+        var prompt = new TextPrompt<string>("Enter the Id of the task you want to update.")
+            .PromptStyle("blue");
+        return prompt.Show(AnsiConsole.Console);
+    }
+    
+    public static string ShowUpdateTaskTimeToCompleteConfirmation()
+    {
+        var menu = new SelectionPrompt<string>()
+            .Title("Are you sure you want to update the time to complete? This will invalidate the current earliest start times and you will need to re-generate them.")
+            .AddChoices(new[] { "Continue", "Back" });
+        return menu.Show(AnsiConsole.Console);
+    }
+    
+    public static string ShowUpdateTaskTimeToCompletePrompt()
+    {
+        var prompt = new TextPrompt<string>("Enter the new time to complete the task.")
+            .PromptStyle("blue")
+            .ValidationErrorMessage("Invalid time to complete.")
+            .Validate(timeToComplete => int.TryParse(timeToComplete, out _) ? ValidationResult.Success() : ValidationResult.Error("Invalid time to complete."));
+        return prompt.Show(AnsiConsole.Console);
+    }
     
     public static string ShowImportTasksConfirmation()
     {

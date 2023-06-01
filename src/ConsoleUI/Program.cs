@@ -25,6 +25,17 @@ public class Program
                         newTaskDependencies.RemoveAll(s => s == "");
                         new CreateTaskCommand(newTaskId, newTaskTimeToComplete, newTaskDependencies).Execute(state);
                         break;
+                    
+                    case "Update Task":
+                        var updateTaskId = Interface.ShowUpdateTaskIdPrompt();
+                        var updateTaskTimeToCompleteConfirmation = Interface.ShowUpdateTaskTimeToCompleteConfirmation();
+                        if (updateTaskTimeToCompleteConfirmation == "Continue")
+                        {
+                            var updateTaskTimeToComplete = int.Parse(Interface.ShowUpdateTaskTimeToCompletePrompt());
+                            new UpdateTaskCommand(updateTaskId, updateTaskTimeToComplete).Execute(state);
+                        }
+                        
+                        break;
                     case "Import Tasks (from file)":
                         switch (Interface.ShowImportTasksConfirmation())
                         {
