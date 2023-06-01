@@ -11,7 +11,7 @@ public static class Interface
             .RoundedBorder();
         AnsiConsole.Write(panel);
         var menu = new SelectionPrompt<string>()
-            .AddChoices(new[] { "Create Task", "Import Tasks (from file)", "Save Tasks (to file)", "Save Ordered Tasks (to file)", "Save Optimized Tasks (to file)", "Exit" });
+            .AddChoices(new[] { "Create Task", "Update Task", "Import Tasks (from file)", "Save Tasks (to file)", "Save Ordered Tasks (to file)", "Save Optimized Tasks (to file)", "Exit" });
         return menu.Show(AnsiConsole.Console);
     }
     
