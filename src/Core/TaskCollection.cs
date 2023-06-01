@@ -1,7 +1,7 @@
 using TaskEntity = ProjectManagementSystem.Core.Task;
 namespace ProjectManagementSystem.Core;
 
-public class TaskCollection : List<TaskEntity>
+public class TaskCollection : HashSet<TaskEntity>
 {
     /// <summary>
     /// Finds a task by ID.
