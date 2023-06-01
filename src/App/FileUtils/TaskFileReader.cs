@@ -49,7 +49,7 @@ public static class TaskFileReader
         for(var i = 0; i < taskRecords.Count; i++)
         {
             var taskRecord = taskRecords.ElementAt(i);
-            var task = tasks[i];
+            var task = tasks.ElementAt(i);
             foreach (var dependencyId in taskRecord.Dependencies)
             {
                 var dependency = tasks.FirstOrDefault(t => t.Id == dependencyId);

@@ -59,8 +59,9 @@ public class State
     /// <param name="duration">The new duration of the task.</param>
     public void UpdateTaskDuration(string id, int duration)
     {
-        var index = _tasks.FindIndex(t => t.Id == id);
-        _tasks[index].TimeToComplete = duration;
+        var task = _tasks.FindById(id);
+        if (task == null) throw new Exception($"Task {id} does not exist.");
+        task.TimeToComplete = duration;
         _optimizer = null;
     }
 
