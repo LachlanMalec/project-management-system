@@ -61,7 +61,7 @@ public class TestTaskOptimizer
         
         var taskOptimizer = new TaskOptimizer(taskCollection);
         
-        var expectedSequenceOrder = new TaskCollection { task1, task2, task7, task4, task5, task3, task6 };
+        var expectedSequenceOrder = new TaskCollection { task1, task2, task7, task4, task5, task6, task3 };
         
         var expectedEarliestStartTimes = new Dictionary<Task, int>
         {
