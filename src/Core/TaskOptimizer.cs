@@ -56,6 +56,12 @@ public class TaskOptimizer
             startTimes.Add(task.Key, task.Value - task.Key.TimeToComplete);
         }
         
+        var orderedStartTimes = new Dictionary<TaskEntity, int>();
+        foreach (var task in _tasks)
+        {
+            orderedStartTimes.Add(task, startTimes[task]);
+        }
+
         return startTimes;
     }
     
@@ -89,7 +95,7 @@ public class TaskOptimizer
     /// <summary>
     /// A topological sort using Kahn's algorithm.
     /// </summary>
-    /// <exception cref="Exception"></exception>
+    /// <exception cref="Exception">Thrown if the graph is not a valid DAG.</exception>
     private void TopologicalSort()
     {
         // List of optimized tasks.
@@ -142,7 +148,7 @@ public class TaskOptimizer
             }
         }
         
-        // If there are still edges, then there is a cycle.
+        // If there are still edges, then the graph is not a valid DAG.
         if (_edges.Any())
         {
             throw new Exception("Cycle detected.");
