@@ -121,10 +121,8 @@ public static class Interface
         return menu.Show(AnsiConsole.Console);
     }
     
-    public static string ShowError(string message)
+    public static void ShowError(string message)
     {
-        var prompt = new TextPrompt<string>(message)
-            .PromptStyle("red");
-        return prompt.Show(AnsiConsole.Console);
+        AnsiConsole.MarkupLine($"[red]{message}[/]");
     }
 }

@@ -20,6 +20,11 @@ public class Program
                 {
                     case "Create Task":
                         var newTaskId = Interface.ShowCreateTaskIdPrompt();
+                        if (state.Tasks.FindById(newTaskId) != null)
+                        {
+                            Interface.ShowError($"Task with id {newTaskId} already exists.");
+                            break;
+                        }
                         var newTaskTimeToComplete = int.Parse(Interface.ShowCreateTaskTimeToCompletePrompt());
                         var newTaskDependencies = Interface.ShowCreateTaskDependenciesPrompt().Split(",").ToList();
                         newTaskDependencies.RemoveAll(s => s == "");
@@ -28,6 +33,12 @@ public class Program
                     
                     case "Update Task":
                         var updateTaskId = Interface.ShowUpdateTaskIdPrompt();
+                        var updateTask = state.Tasks.FindById(updateTaskId);
+                        if (updateTask == null)
+                        {
+                            Interface.ShowError($"Task with id {updateTaskId} does not exist.");
+                            break;
+                        }
                         var updateTaskTimeToCompleteConfirmation = Interface.ShowUpdateTaskTimeToCompleteConfirmation();
                         if (updateTaskTimeToCompleteConfirmation == "Continue")
                         {
