@@ -51,6 +51,25 @@ public class State
         _tasks.Add(task);
         _optimizer = null;
     }
+    
+    /// <summary>
+    /// Removes a task from the list of tasks.
+    /// </summary>
+    /// <param name="id>">The ID of the task to remove.</param>
+    public void RemoveTask(string id)
+    {
+        var task = _tasks.FindById(id);
+        if (task == null) throw new Exception($"Task {id} does not exist.");
+        
+        // Remove the task from the dependencies of other tasks
+        foreach (var otherTask in _tasks)
+        {
+            otherTask.Dependencies.Remove(task);
+        }
+        
+        _tasks.Remove(task);
+        _optimizer = null;
+    }
 
     /// <summary>
     /// Updates the duration of a task in the list of tasks.
