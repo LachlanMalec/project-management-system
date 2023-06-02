@@ -7,6 +7,12 @@ public class CreateTaskCommand
     private readonly int _timeToComplete;
     private readonly List<string> _dependencies;
     
+    /// <summary>
+    /// A command to create a task.
+    /// </summary>
+    /// <param name="id">The ID of the task.</param>
+    /// <param name="timeToComplete">The time to complete the task.</param>
+    /// <param name="dependencies">The IDs of the tasks that this task depends on.</param>
     public CreateTaskCommand(string id, int timeToComplete, List<string> dependencies)
     {
         _id = id;
@@ -14,6 +20,10 @@ public class CreateTaskCommand
         _dependencies = dependencies;
     }
     
+    /// <summary>
+    /// Executes the command.
+    /// </summary>
+    /// <param name="state">The state to execute the command on.</param>
     public void Execute(State state)
     {
         var dependencies = new List<TaskEntity>();
