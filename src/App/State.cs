@@ -84,6 +84,10 @@ public class State
         _optimizer = null;
     }
 
+    /// <summary>
+    /// Gets dictionary of tasks and their earliest start times.
+    /// </summary>
+    /// <returns>Gets dictionary of tasks and their earliest start times.</returns>
     public Task<Dictionary<TaskEntity, int>> OptimizedTasks()
     {
         if (_optimizer != null) return Task.FromResult(_optimizer.Optimize());
@@ -91,6 +95,10 @@ public class State
         return Task.FromResult(_optimizer.Optimize());
     }
     
+    /// <summary>
+    /// Gets the tasks in a valid order.
+    /// </summary>
+    /// <returns>A collection of tasks in a valid order.</returns>
     public Task<TaskCollection> OrderedTasks()
     {
         if (_optimizer != null) return Task.FromResult(_optimizer.Order());
