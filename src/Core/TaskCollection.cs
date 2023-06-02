@@ -1,6 +1,9 @@
 using TaskEntity = ProjectManagementSystem.Core.Task;
 namespace ProjectManagementSystem.Core;
 
+/// <summary>
+/// A collection of tasks.
+/// </summary>
 public class TaskCollection : HashSet<TaskEntity>
 {
     /// <summary>
