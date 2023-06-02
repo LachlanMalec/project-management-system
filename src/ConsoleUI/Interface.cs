@@ -1,5 +1,3 @@
-using Spectre.Console.Rendering;
-
 namespace ProjectManagementSystem.ConsoleUI;
 using Spectre.Console;
 public static class Interface
@@ -11,7 +9,7 @@ public static class Interface
             .RoundedBorder();
         AnsiConsole.Write(panel);
         var menu = new SelectionPrompt<string>()
-            .AddChoices(new[] { "Create Task", "Update Task", "Import Tasks (from file)", "Save Tasks (to file)", "Save Ordered Tasks (to file)", "Save Optimized Tasks (to file)", "Exit" });
+            .AddChoices(new[] { "Create Task", "Update Task", "Remove Task", "Import Tasks (from file)", "Save Tasks (to file)", "Save Ordered Tasks (to file)", "Save Optimized Tasks (to file)", "Exit" });
         return menu.Show(AnsiConsole.Console);
     }
     
@@ -37,6 +35,21 @@ public static class Interface
             .PromptStyle("blue")
             .AllowEmpty();
         return prompt.Show(AnsiConsole.Console);
+    }
+    
+    public static string ShowRemoveTaskIdPrompt()
+    {
+        var prompt = new TextPrompt<string>("Enter the Id of the task you want to remove.")
+            .PromptStyle("blue");
+        return prompt.Show(AnsiConsole.Console);
+    }
+    
+    public static string ShowRemoveTaskConfirmation()
+    {
+        var menu = new SelectionPrompt<string>()
+            .Title("Are you sure you want to remove the task? This will invalidate the current order and earliest start times and you will need to re-generate them.")
+            .AddChoices(new[] { "Continue", "Back" });
+        return menu.Show(AnsiConsole.Console);
     }
 
     public static string ShowUpdateTaskIdPrompt()

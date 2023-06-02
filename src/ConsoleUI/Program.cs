@@ -47,6 +47,21 @@ public class Program
                         }
 
                         break;
+                    case "Remove Task":
+                        var removeTaskId = Interface.ShowRemoveTaskIdPrompt();
+                        var removeTask = state.Tasks.FindById(removeTaskId);
+                        if (removeTask == null)
+                        {
+                            Interface.ShowError($"Task with id {removeTaskId} does not exist.");
+                            break;
+                        }
+                        var removeTaskConfirmation = Interface.ShowRemoveTaskConfirmation();
+                        if (removeTaskConfirmation == "Continue")
+                        {
+                            new RemoveTaskCommand(removeTaskId).Execute(state);
+                        }
+                        
+                        break;
                     case "Import Tasks (from file)":
                         switch (Interface.ShowImportTasksConfirmation())
                         {
