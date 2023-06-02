@@ -2,14 +2,25 @@ using System.Diagnostics;
 using TaskEntity = ProjectManagementSystem.Core.Task;
 namespace ProjectManagementSystem.Core;
 
+/// <summary>
+/// An optimizer for a collection of tasks.
+/// The input task collection will not be modified.
+/// </summary>
 public class TaskOptimizer
 {
     private readonly TaskCollection _tasks;
     private readonly HashSet<Tuple<TaskEntity, TaskEntity>> _edges;
     
-    // Memoization of topologically sorted tasks.
+    // Memoization of topological order.
     private TaskCollection? _topologicalOrder;
+    
+    // Memoization of earliest start times.
+    private Dictionary<TaskEntity, int>? _earliestStartTimes;
 
+    /// <summary>
+    /// Creates a new task optimizer.
+    /// </summary>
+    /// <param name="tasks">The task collection that will be optimized.</param>
     public TaskOptimizer(TaskCollection tasks)
     {
         _tasks = tasks;
@@ -23,6 +34,10 @@ public class TaskOptimizer
         }
     }
 
+    /// <summary>
+    /// Computes a valid execution order of the tasks.
+    /// </summary>
+    /// <returns>A task collection in valid order.</returns>
     public TaskCollection Order()
     {
         if (_topologicalOrder == null)
@@ -32,14 +47,24 @@ public class TaskOptimizer
         return _topologicalOrder!;
     }
 
+    /// <summary>
+    /// Computes the earliest start time for each task.
+    /// </summary>
+    /// <returns>A dictionary of tasks and their earliest start times.</returns>
     public Dictionary<TaskEntity, int> Optimize()
     {
+        // Check if the earliest start times have already been calculated.
+        if (_earliestStartTimes != null)
+        {
+            return _earliestStartTimes;
+        }
+        
         // Get the topological order.
         if (_topologicalOrder == null)
         {
             TopologicalSort();
         }
-        
+
         var endTimes = new Dictionary<TaskEntity, int>();
         
         // Calculate the end time of each task.
@@ -56,20 +81,22 @@ public class TaskOptimizer
             startTimes.Add(task.Key, task.Value - task.Key.TimeToComplete);
         }
         
+        // Order the tasks by the user created collection order.
         var orderedStartTimes = new Dictionary<TaskEntity, int>();
         foreach (var task in _tasks)
         {
             orderedStartTimes.Add(task, startTimes[task]);
         }
 
-        return startTimes;
+        _earliestStartTimes = orderedStartTimes;
+        return orderedStartTimes;
     }
     
     /// <summary>
     /// Calculates the end time of a task.
     /// </summary>
     /// <param name="task">The task to calculate the end time of.</param>
-    /// <param name="endTimes">The dictionary of end already calculated end times.</param>
+    /// <param name="endTimes">The dictionary of already calculated end times.</param>
     private void CalculateEndTime(TaskEntity task, Dictionary<TaskEntity, int> endTimes)
     {
         if (endTimes.TryGetValue(task, out var time))
