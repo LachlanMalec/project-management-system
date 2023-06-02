@@ -43,9 +43,9 @@ public class Program
                         if (updateTaskTimeToCompleteConfirmation == "Continue")
                         {
                             var updateTaskTimeToComplete = int.Parse(Interface.ShowUpdateTaskTimeToCompletePrompt());
-                            new UpdateTaskCommand(updateTaskId, updateTaskTimeToComplete).Execute(state);
+                            new UpdateTaskDurationCommand(updateTaskId, updateTaskTimeToComplete).Execute(state);
                         }
-                        
+
                         break;
                     case "Import Tasks (from file)":
                         switch (Interface.ShowImportTasksConfirmation())
