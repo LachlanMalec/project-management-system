@@ -9,8 +9,7 @@ namespace ProjectManagementSystem.Core;
 public class TaskOptimizer
 {
     private readonly TaskCollection _tasks;
-    private readonly HashSet<Tuple<TaskEntity, TaskEntity>> _edges;
-    
+
     // Memoization of topological order.
     private TaskCollection? _topologicalOrder;
     
@@ -24,14 +23,6 @@ public class TaskOptimizer
     public TaskOptimizer(TaskCollection tasks)
     {
         _tasks = tasks;
-        _edges = new HashSet<Tuple<TaskEntity, TaskEntity>>();
-        foreach (var task in tasks)
-        {
-            foreach (var dependency in task.Dependencies)
-            {
-                _edges.Add(new Tuple<TaskEntity, TaskEntity>(dependency, task));
-            }
-        }
     }
 
     /// <summary>
@@ -125,62 +116,52 @@ public class TaskOptimizer
     /// <exception cref="Exception">Thrown if the graph is not a valid DAG.</exception>
     private void TopologicalSort()
     {
-        // List of optimized tasks.
-        var l = new TaskCollection();
-        
-        // Set of tasks with no incoming edges.
-        var s = new HashSet<TaskEntity>();
-        foreach (var task in _tasks)
-        {
-            if (task.Dependencies.Count == 0)
-            {
-                s.Add(task);
+        // Create a dictionary to store in-degrees of all vertices.
+        Dictionary<Task, int> inDegree = _tasks.ToDictionary(task => task, task => 0);
+
+        // Traverse dependencies of each task to fill in-degrees of vertices.
+        foreach (var task in _tasks) {
+            foreach (var dep in task.Dependencies) {
+                inDegree[dep]++;
             }
         }
 
-        // While there are nodes with no incoming edges.
-        while (s.Any())
-        {
-            // Remove a node with no incoming edges.
-            var n = s.First();
-            s.Remove(n);
-            
-            // Add the node to the optimized task collection.
-            l.Add(n);
+        // Create a queue and enqueue all vertices with in-degree 0.
+        Queue<Task> queue = new Queue<Task>(inDegree.Where(kv => kv.Value == 0).Select(kv => kv.Key));
 
-            // Remove all outgoing edges from the node.
-            var toRemove = new List<Tuple<TaskEntity, TaskEntity>>();
-            foreach (var edge in _edges)
-            {
-                if (edge.Item1 == n)
-                {
-                    toRemove.Add(edge);
+        // Initialize count of visited vertices.
+        var count = 0;
+
+        // Create a list to store result (A topological ordering of the vertices).
+        TaskCollection topOrder = new TaskCollection();
+
+        while (queue.Count > 0) {
+            // Extract front of queue and add it to topological order.
+            Task u = queue.Dequeue();
+            topOrder.Add(u);
+
+            // Iterate through all its dependencies (neighboring nodes).
+            // If in-degree of neighboring nodes is reduced to zero, then add it to the queue.
+            foreach (Task neighbor in u.Dependencies) {
+                inDegree[neighbor]--;
+                if (inDegree[neighbor] == 0) {
+                    queue.Enqueue(neighbor);
                 }
             }
-            
-            // Remove the edges.
-            foreach (var edge in toRemove)
-            {
-                _edges.Remove(edge);
-            }
-            
-            // For each node that had an edge removed, if it now has no incoming edges, add it to the set of nodes with no incoming edges.
-            foreach (var edge in toRemove)
-            {
-                var m = edge.Item2;
-                if (_edges.All(e => e.Item2 != m))
-                {
-                    s.Add(m);
-                }
-            }
+
+            count++;
+        }
+
+        // Check if there was a cycle.
+        if (count != inDegree.Count) {
+            throw new Exception("Graph is not a valid DAG.");
+        }
+
+        var taskCollection = new TaskCollection();
+        foreach (var task in topOrder.Reverse()) {
+            taskCollection.Add(task);
         }
         
-        // If there are still edges, then the graph is not a valid DAG.
-        if (_edges.Any())
-        {
-            throw new Exception("Cycle detected.");
-        }
-        
-        _topologicalOrder = l;
+        _topologicalOrder = taskCollection;
     }
 }
