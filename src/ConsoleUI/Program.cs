@@ -25,12 +25,12 @@ public class Program
                             Interface.ShowError($"Task with id {newTaskId} already exists.");
                             break;
                         }
+
                         var newTaskTimeToComplete = int.Parse(Interface.ShowCreateTaskTimeToCompletePrompt());
                         var newTaskDependencies = Interface.ShowCreateTaskDependenciesPrompt().Split(",").ToList();
                         newTaskDependencies.RemoveAll(s => s == "");
                         new CreateTaskCommand(newTaskId, newTaskTimeToComplete, newTaskDependencies).Execute(state);
                         break;
-                    
                     case "Update Task":
                         var updateTaskId = Interface.ShowUpdateTaskIdPrompt();
                         var updateTask = state.Tasks.FindById(updateTaskId);
@@ -39,6 +39,7 @@ public class Program
                             Interface.ShowError($"Task with id {updateTaskId} does not exist.");
                             break;
                         }
+
                         var updateTaskTimeToCompleteConfirmation = Interface.ShowUpdateTaskTimeToCompleteConfirmation();
                         if (updateTaskTimeToCompleteConfirmation == "Continue")
                         {
@@ -55,12 +56,13 @@ public class Program
                             Interface.ShowError($"Task with id {removeTaskId} does not exist.");
                             break;
                         }
+
                         var removeTaskConfirmation = Interface.ShowRemoveTaskConfirmation();
                         if (removeTaskConfirmation == "Continue")
                         {
                             new RemoveTaskCommand(removeTaskId).Execute(state);
                         }
-                        
+
                         break;
                     case "Import Tasks (from file)":
                         switch (Interface.ShowImportTasksConfirmation())
@@ -107,10 +109,8 @@ public class Program
                             case "Continue":
                                 await AnsiConsole.Status()
                                     .Spinner(Spinner.Known.Dots2)
-                                    .StartAsync("Saving valid task order...", async ctx =>
-                                    {
-                                        await new SaveOrderedTasksCommand().Execute(state);
-                                    });
+                                    .StartAsync("Saving valid task order...",
+                                        async ctx => { await new SaveOrderedTasksCommand().Execute(state); });
                                 break;
                             case "Back":
                                 break;
@@ -121,7 +121,10 @@ public class Program
                         switch (Interface.ShowSaveOptimizedTasksConfirmation())
                         {
                             case "Continue":
-                                await new SaveOptimizedTasksCommand().Execute(state);
+                                await AnsiConsole.Status()
+                                    .Spinner(Spinner.Known.Dots2)
+                                    .StartAsync("Saving earliest start times...",
+                                        async ctx => { await new SaveOptimizedTasksCommand().Execute(state); });
                                 break;
                             case "Back":
                                 break;
@@ -140,7 +143,8 @@ public class Program
 
                         break;
                 }
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 Interface.ShowError(e.Message);
             }
