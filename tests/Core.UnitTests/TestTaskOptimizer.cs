@@ -28,7 +28,7 @@ public class TestTaskOptimizer
         Assert.Multiple(() =>
         {
             Assert.That(taskOptimizer, Is.Not.Null);
-            Assert.That(taskOptimizer.Order(), Is.EqualTo(taskCollection));
+            Assert.That(taskOptimizer.Order(), Is.EqualTo(taskCollection.Reverse()));
             Assert.That(taskOptimizer.Optimize(), Is.EqualTo(expectedEarliestStartTimes));
         });
     }
@@ -61,7 +61,7 @@ public class TestTaskOptimizer
         
         var taskOptimizer = new TaskOptimizer(taskCollection);
         
-        var expectedSequenceOrder = new TaskCollection { task1, task2, task7, task4, task5, task6, task3 };
+        var expectedSequenceOrder = new TaskCollection { task7, task1, task4, task2,  task5, task6, task3 };
         
         var expectedEarliestStartTimes = new Dictionary<Task, int>
         {
