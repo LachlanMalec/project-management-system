@@ -34,31 +34,27 @@ public static class TaskFileReader
     public static Task<TaskCollection> Read(string filePath)
     {
         var taskRecords = File.ReadAllLines(filePath).Select(ReadTaskRecord).ToList();
-
-        var tasks = new TaskCollection();
         
-        // Create a new task for each task record
-        // Dependencies are not added yet because the tasks may not exist yet
+        var taskOrder = new List<string>();
+
+        var tasks = new Dictionary<string, TaskEntity>();
         foreach (var taskRecord in taskRecords)
         {
             var newTask = new TaskEntity(taskRecord.Id, taskRecord.TimeToComplete, new List<TaskEntity>());
-            tasks.Add(newTask);
+            tasks.Add(taskRecord.Id, newTask);
         }
-
-        // Add dependencies to each task
-        for(var i = 0; i < taskRecords.Count; i++)
+        foreach (var taskRecord in taskRecords)
         {
-            var taskRecord = taskRecords.ElementAt(i);
-            var task = tasks.ElementAt(i);
+            var task = tasks[taskRecord.Id];
             foreach (var dependencyId in taskRecord.Dependencies)
             {
-                var dependency = tasks.FirstOrDefault(t => t.Id == dependencyId);
-                if (dependency == null) throw new Exception($"Task {task.Id} depends on task {dependencyId} which does not exist.");
-                task.Dependencies.Add(dependency);
+                tasks.TryGetValue(dependencyId, out var dependencyTask);
+                if (dependencyTask == null) throw new Exception($"Task {taskRecord.Id} depends on {dependencyId} which does not exist.");
+                task.Dependencies.Add(dependencyTask);
             }
         }
-        
-        // Return the task collection
-        return Task.FromResult(tasks);
+        var taskCollection = new TaskCollection();
+        foreach (var task in tasks.Values) taskCollection.Add(task);
+        return Task.FromResult(taskCollection);
     }
 }
