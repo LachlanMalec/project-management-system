@@ -33,9 +33,14 @@ public static class TaskFileReader
     /// <returns>A new TaskCollection that was stored in the file.</returns>
     public static Task<TaskCollection> Read(string filePath)
     {
-        var taskRecords = File.ReadAllLines(filePath).Select(ReadTaskRecord).ToList();
+        // Read all lines from the file.
+        var fileLines = File.ReadAllLines(filePath);
         
-        var taskOrder = new List<string>();
+        // Remove any lines that are empty, or only contain whitespace.
+        fileLines = fileLines.Where(line => !string.IsNullOrWhiteSpace(line)).ToArray();
+
+        // Parse each line into a TaskRecord.
+        var taskRecords = fileLines.Select(ReadTaskRecord).ToArray();
 
         var tasks = new Dictionary<string, TaskEntity>();
         foreach (var taskRecord in taskRecords)
